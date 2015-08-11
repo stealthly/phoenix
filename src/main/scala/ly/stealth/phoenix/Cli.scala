@@ -147,7 +147,6 @@ object Cli {
       connection.disconnect()
     }
 
-    println(response)
     objectMapper.readValue(response, classOf[ApiResponse])
   }
 
@@ -248,18 +247,17 @@ object Cli {
         config.updated("config", value)
       }
 
-      opt[String]('a', "api").optional().text("Binding host:port for http/artifact server. Optional if EM_API env is set.").action { (value, config) =>
+      opt[String]('a', "api").optional().text("Binding host:port for http/artifact server. Optional if defined in config or EM_API env is set.").action { (value, config) =>
         config.updated("api", value)
       }
 
-      opt[String]("aws-access-key").optional().text("Aws access key.").action { (value, config) =>
+      opt[String]("aws-access-key").optional().text("Aws access key. Optional if defined in config file or env AWS_ACCESS_KEY_ID is set.").action { (value, config) =>
         config.updated("aws-access-key", value)
       }
 
-      opt[String]("aws-secret-key").optional().text("Aws secret key.").action { (value, config) =>
+      opt[String]("aws-secret-key").optional().text("Aws secret key. Optional if defined in config file or env AWS_SECRET_ACCESS_KEY is set.").action { (value, config) =>
         config.updated("aws-secret-key", value)
       }
-
     }
 
     def reads[A](f: String => A): Read[A] = new Read[A] {
@@ -270,7 +268,7 @@ object Cli {
     implicit val doubleOptRead: Read[Option[Double]]             = reads {s => if (s == null) None else Some(s.toDouble) }
     implicit val stringOptRead: Read[Option[String]]             = reads {s => Option(s) }
 
-    val add = new OptionParser[AddConfig]("add <id>") {
+    val add = new OptionParser[AddConfig]("add") {
       override def showUsage {
         Cli.out.println(usage)
         printLine()
@@ -298,7 +296,7 @@ object Cli {
 
     }
 
-    val delete : OptionParser[Map[String, String]] = new CliOptionParser("remove <id>") {
+    val delete : OptionParser[Map[String, String]] = new CliOptionParser("delete") {
 
       opt[Int]('i', "id").required().text(s"CPUs for server. Required.").action { (value, config) =>
         config.updated("id", value.toString)
