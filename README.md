@@ -166,3 +166,10 @@ Usage: delete [options]
   -a <value> | --api <value>
         Binding host:port for http/artifact server. Optional if EM_API env is set.
 ```
+
+Troubleshooting
+==================
+
+Goto Mesos UI (<mesos-master-host>:5050) check the framework (default secor-mesos) and its tasks.
+
+Logs in task's sandbox: `stdout`, `stderr` and `secor-secor_backup.log` may be helpful.

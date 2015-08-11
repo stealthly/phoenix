@@ -59,17 +59,22 @@ object Cli {
     }
   }
 
+  private def ?(str: String): Option[String] = Option(str).map(_.trim).filter(_.nonEmpty)
+
   def handleScheduler(args: Array[String]) {
     Parsers.scheduler.parse(args, Map()) match {
       case Some(config) =>
         val configFile = new File(config("config"))
 
-        val apiOverrideOpt = config.get("api").orElse(Option(System.getenv("EM_API")))
-        val awsAccessKeyOverrideOpt = config.get("aws-access-key").orElse(Option(System.getenv("AWS_ACCESS_KEY_ID")))
-        val awsSecretKeyOverrideOpt = config.get("aws-secret-key").orElse(Option(System.getenv("AWS_SECRET_ACCESS_KEY")))
+        val apiOverride = config.get("api").flatMap(?).orElse(?(System.getenv("EM_API")))
+        .getOrElse(throw new CliError("api parameter is not resolved (try setting in config file, environment variable, or cli parameter)"))
+        val awsAccessKeyOverride = config.get("aws-access-key").flatMap(?).orElse(?(System.getenv("AWS_ACCESS_KEY_ID")))
+          .getOrElse(throw new CliError("aws-access-key parameter is not resolved (try setting in config file, environment variable, or cli parameter)"))
+        val awsSecretKeyOverride = config.get("aws-secret-key").flatMap(?).orElse(?(System.getenv("AWS_SECRET_ACCESS_KEY")))
+          .getOrElse(throw new CliError("aws-secret-key parameter is not resolved (try setting in config file, environment variable, or cli parameter)"))
 
-        val overrides = Map("phoenix.api" -> apiOverrideOpt, "aws.access.key" -> awsAccessKeyOverrideOpt,
-          "aws.secret.key" -> awsSecretKeyOverrideOpt).collect { case (k, Some(v)) => (k, v)}
+        val overrides = Map("phoenix.api" -> apiOverride, "aws.access.key" -> awsAccessKeyOverride,
+          "aws.secret.key" -> awsSecretKeyOverride)
 
         val schedulerConfig = Config(configFile, overrides)
         val scheduler = new Scheduler(schedulerConfig)
@@ -117,8 +122,8 @@ object Cli {
   }
 
   private def resolveApi(apiOption: Option[String]): String = {
-    apiOption
-      .orElse(Option(System.getenv("EM_API")))
+    apiOption.flatMap(?)
+      .orElse(?(System.getenv("EM_API")))
       .getOrElse(throw CliError("Undefined API url. Please provide either a CLI --api option or EM_API env."))
   }
 
@@ -175,7 +180,6 @@ object Cli {
       connection.disconnect()
     }
 
-    println(response)
     objectMapper.readValue(response, classOf[ApiResponse])
   }
 
@@ -197,7 +201,6 @@ object Cli {
       connection.disconnect()
     }
 
-    println(response)
     objectMapper.readValue(response, classOf[ApiResponse])
   }
 

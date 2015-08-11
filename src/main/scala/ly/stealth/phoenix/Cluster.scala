@@ -109,7 +109,7 @@ class Cluster {
 
   def applicableRequest(resourceOffer: ResourceOffer): Option[Server] = {
     this.synchronized {
-      servers.find {
+      servers.filter(s => s.state == State.Stopped || s.state == State.Added).find {
         server => resourceOffer.matches(server.requestTemplate)
       }
     }
