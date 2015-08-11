@@ -22,9 +22,19 @@ object Config {
 
 class Config(props: Properties) {
 
-  val MesosZk = props.getProperty("zk")
-  val MesosMaster = props.getProperty("master")
-  val RestApi = props.getProperty("api")
-  val FrameworkName = props.getProperty("framework.name")
+  val MesosZk = props.getProperty("mesos.zk")
+  val MesosMaster = props.getProperty("mesos.master")
+  val FrameworkName = props.getProperty("mesos.framework.name")
 
+  val RestApi = props.getProperty("phoenix.api")
+
+  // MUST SET FOR SECOR
+
+  val SecorKafkaTopicFilter = props.getProperty("secor.kafka.topic_filter")
+  val AwsAccessKey = props.getProperty("aws.access.key")
+  val AwsSecretKey = props.getProperty("aws.secret.key")
+
+  val SecorS3Bucket = props.getProperty("secor.s3.bucket")
+  val KafkaSeedBrokerHost = props.getProperty("kafka.seed.broker.host")
+  val ZookeeperQuorum = props.getProperty("zookeeper.quorum")
 }

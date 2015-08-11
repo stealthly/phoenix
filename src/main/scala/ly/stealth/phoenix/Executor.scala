@@ -59,14 +59,13 @@ object Executor extends org.apache.mesos.Executor {
   private val Log4jConfigProp = "-Dlog4j.configuration=log4j.prod.properties"
   private val ConfigProp = "-Dconfig=secor.prod.backup.properties"
   private val ClassPath = "secor-0.2-SNAPSHOT.jar:lib/*"
-  private val MainClass = "secor-0.2-SNAPSHOT.jar:lib/*"
+  private val MainClass = "com.pinterest.secor.main.ConsumerMain"
 
 
   private def startBroker(driver: ExecutorDriver, task: TaskInfo): Unit = {
     def runBroker0 {
       try {
         val data: util.Map[String, String] = Util.parseMap(task.getData.toStringUtf8).asJava
-
         val overrides = Util.parseMap(data.get("overrides"))
 
         val overrideProps = overrides.map {
