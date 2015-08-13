@@ -9,7 +9,7 @@ Assuming $WORKING_DIR is you repos directory.
 
 To build the fatjar:
     
-    # cd $WORKING_DIR && git clone -b phoenix-backup https://github.com/stealthly/phoenix.git phoenix   
+    # cd $WORKING_DIR && git clone https://github.com/stealthly/phoenix.git phoenix   
     # cd phoenix && ./gradlew jar
 
 To run the phoenix scheduler you will need Secor tar archive:
